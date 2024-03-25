@@ -2,22 +2,22 @@
 #include <string.h>
 #include <float.h>
 #include <iostream>
-#include "..\libs\QdFtdcMdApi\QdFtdcMdApi.h"
+#include "../libs/QdFtdcMdApi/QdFtdcMdApi.h"
 using namespace std;
 
 
-class CSimpleHandler : public CQdpFtdcMduserSpi
+class CSimpleHandler : public CQdFtdcMduserSpi
 {
 public:
 	// 构造函数，需要一个有效的指向CQdpFtdcMduserApi实例的指针
-	CSimpleHandler(CQdpFtdcMduserApi* pUserApi) : m_pUserApi(pUserApi) {}
+	CSimpleHandler(CQdFtdcMduserApi* pUserApi) : m_pUserApi(pUserApi) {}
 
 	~CSimpleHandler() {}
 
 	// 当客户端与行情发布服务器建立起通信连接，客户端需要进行登录
 	void OnFrontConnected()
 	{
-		CQdpFtdcReqUserLoginField reqUserLogin;
+		CQdFtdcReqUserLoginField reqUserLogin;
 		strcpy(reqUserLogin.TradingDay, m_pUserApi->GetTradingDay());
 		strcpy(reqUserLogin.BrokerID, "0001");
 		strcpy(reqUserLogin.UserID, "t002");
@@ -33,7 +33,7 @@ public:
 	}
 
 	// 当客户端发出登录请求之后，该方法会被调用，通知客户端登录是否成功
-	void OnRspUserLogin(CQdpFtdcRspUserLoginField* pRspUserLogin, CQdpFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast)
+	void OnRspUserLogin(CQdFtdcRspUserLoginField* pRspUserLogin, CQdFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast)
 	{
 		printf("OnRspUserLogin:\n");
 		printf("ErrorCode=[%d], ErrorMsg=[%s]\n", pRspInfo->ErrorID, pRspInfo->ErrorMsg);
@@ -58,7 +58,7 @@ public:
 	}
 
 	// 深度行情通知，行情服务器会主动通知客户端
-	void OnRtnDepthMarketData(CQdpFtdcDepthMarketDataField* pMarketData)
+	void OnRtnDepthMarketData(CQdFtdcDepthMarketDataField* pMarketData)
 	{
 		// 客户端按需处理返回的数据
 		printf("%s,%s,%d,", pMarketData->InstrumentID, pMarketData->UpdateTime, pMarketData->UpdateMillisec);
@@ -74,7 +74,7 @@ public:
 	}
 
 	// 针对用户请求的出错通知
-	void OnRspError(CQdpFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast)
+	void OnRspError(CQdFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast)
 	{
 		printf("OnRspError:\n");
 		printf("ErrorCode=[%d], ErrorMsg=[%s]\n", pRspInfo->ErrorID, pRspInfo->ErrorMsg);
@@ -83,26 +83,26 @@ public:
 	}
 
 	///订阅合约的相关信息
-	void OnRspSubMarketData(CQdpFtdcSpecificInstrumentField* pSpecificInstrument, CQdpFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast)
+	void OnRspSubMarketData(CQdFtdcSpecificInstrumentField* pSpecificInstrument, CQdFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast)
 	{
 		printf("Sub 返回订阅合约：%s \n", pSpecificInstrument->InstrumentID);
 	}
 
 	///订阅合约的相关信息
-	void OnRspUnSubMarketData(CQdpFtdcSpecificInstrumentField* pSpecificInstrument, CQdpFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast)
+	void OnRspUnSubMarketData(CQdFtdcSpecificInstrumentField* pSpecificInstrument, CQdFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast)
 	{
 		printf("UnSub 返回订阅合约：%s \n", pSpecificInstrument->InstrumentID);
 	}
 
 private:
 	// 指向CQdpFtdcMduserApi实例的指针
-	CQdpFtdcMduserApi* m_pUserApi;
+	CQdFtdcMduserApi* m_pUserApi;
 };
 
 int main()
 {
 	// 产生一个CQdpFtdcMduserApi实例
-	CQdpFtdcMduserApi* pUserApi = CQdpFtdcMduserApi::CreateFtdcMduserApi();
+	CQdFtdcMduserApi* pUserApi = CQdFtdcMduserApi::CreateFtdcMduserApi();
 	// 产生一个事件处理的实例
 	CSimpleHandler sh(pUserApi);
 	// 注册一事件处理的实例
