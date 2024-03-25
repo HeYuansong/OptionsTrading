@@ -116,13 +116,9 @@ int main()
 	pUserApi->RegisterFront("tcp://192.168.1.100:7220");
 	// 使客户端开始与行情发布服务器建立连接
 	pUserApi->Init();
-<<<<<<< HEAD
+	//在这里添加代码
 
-
-	
-=======
 	// 释放useapi实例
->>>>>>> 6ea70fd1b0130c7fac9580cd28dbab9d2e0497bd
 	pUserApi->Release();
 	return 0;
 }
