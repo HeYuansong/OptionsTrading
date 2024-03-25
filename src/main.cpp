@@ -83,6 +83,9 @@ int main()
 	pUserApi->RegisterSpi(&sh);
 	pUserApi->RegisterFront("tcp://192.168.1.100:7220");
 	pUserApi->Init();
+
+
+	
 	pUserApi->Release();
 	return 0;
 }
