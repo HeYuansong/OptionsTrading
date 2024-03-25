@@ -105,6 +105,12 @@ int main()
 	CQdFtdcMduserApi* pUserApi = CQdFtdcMduserApi::CreateFtdcMduserApi();
 	// 产生一个事件处理的实例
 	CSimpleHandler sh(pUserApi);
+	//打印
+	const char* i = pUserApi->GetVersion();
+		cout <<'系统版本号为: ' << i << endl;
+	
+
+
 	// 注册一事件处理的实例
 	pUserApi->RegisterSpi(&sh);
 	// 注册需要的深度行情主题
