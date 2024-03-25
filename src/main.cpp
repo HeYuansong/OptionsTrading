@@ -3,6 +3,7 @@
 #include <float.h>
 #include <iostream>
 #include "../libs/QdFtdcMdApi/QdFtdcMdApi.h"
+#include "../libs\TraderApi\apitraderapi\QdpFtdcTraderApi.h"
 using namespace std;
 
 
@@ -17,17 +18,32 @@ public:
 	// 当客户端与行情发布服务器建立起通信连接，客户端需要进行登录
 	void OnFrontConnected()
 	{
+		cout << "建立起来连接OnFrontConnected" << endl;
+		
 		CQdFtdcReqUserLoginField reqUserLogin;
+
+		//CThostFtdcReqUserLoginField loginReq;
+		//memset(&loginReq, 0, sizeof(loginReq));
+
+		
+		
 		strcpy(reqUserLogin.TradingDay, m_pUserApi->GetTradingDay());
-		strcpy(reqUserLogin.BrokerID, "0001");
-		strcpy(reqUserLogin.UserID, "t002");
-		strcpy(reqUserLogin.Password, "111111");
-		m_pUserApi->ReqUserLogin(&reqUserLogin, 0);
+		strcpy(reqUserLogin.BrokerID, "9999");
+		strcpy(reqUserLogin.UserID, "212266");
+		strcpy(reqUserLogin.Password, "Ysd123456");
+
+
+
+		int res = 12;
+			res=m_pUserApi->ReqUserLogin(reqUserLogin, rand()%100);
+cout << "登录返回代码" << res << endl;
+cout << "m_pUserApi->GetTradingDay()" << m_pUserApi->GetTradingDay() << endl;
 	}
 
 	// 当客户端与行情发布服务器通信连接断开时，该方法被调用
 	void OnFrontDisconnected()
 	{
+		cout << "OnFrontDisconnected" << endl;
 		// 当发生这个情况后，API会自动重新连接，客户端可不做处理
 		printf("OnFrontDisconnected.\n");
 	}
@@ -35,6 +51,7 @@ public:
 	// 当客户端发出登录请求之后，该方法会被调用，通知客户端登录是否成功
 	void OnRspUserLogin(CQdFtdcRspUserLoginField* pRspUserLogin, CQdFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast)
 	{
+		cout << "OnRspUserLogin" << endl;
 		printf("OnRspUserLogin:\n");
 		printf("ErrorCode=[%d], ErrorMsg=[%s]\n", pRspInfo->ErrorID, pRspInfo->ErrorMsg);
 		printf("RequestID=[%d], Chain=[%d]\n", nRequestID, bIsLast);
@@ -76,6 +93,7 @@ public:
 	// 针对用户请求的出错通知
 	void OnRspError(CQdFtdcRspInfoField* pRspInfo, int nRequestID, bool bIsLast)
 	{
+		cout << "onerror" << endl;
 		printf("OnRspError:\n");
 		printf("ErrorCode=[%d], ErrorMsg=[%s]\n", pRspInfo->ErrorID, pRspInfo->ErrorMsg);
 		printf("RequestID=[%d], Chain=[%d]\n", nRequestID, bIsLast);
@@ -106,8 +124,9 @@ int main()
 	// 产生一个事件处理的实例
 	CSimpleHandler sh(pUserApi);
 	//打印
-	const char* i = pUserApi->GetVersion();
-		cout <<'系统版本号为: ' << i << endl;
+	
+
+		
 	
 
 
@@ -117,14 +136,29 @@ int main()
 	///        TERT_RESTART:从本交易日开始重传
 	///        TERT_RESUME:从上次收到的续传
 	///        TERT_QUICK:先传送当前行情快照,再传送登录后市场行情的内容	//pUserApi-> SubscribeMarketDataTopic (101, TERT_RESUME);
-	//pUserApi-> SubscribeMarketDataTopic (110, QDP_TERT_RESTART);
+	//pUserApi-> SubscribeMarketDataTopic (110, QD_TERT_RESTART);
 	// 设置行情发布服务器的地址
-	pUserApi->RegisterFront("tcp://192.168.1.100:7220");
+	pUserApi->RegisterFront("tcp://180.168.146.187:10131");	
+	//pUserApi->RegisterFront("tcp://192.168.1.100:7220");	
+
 	// 使客户端开始与行情发布服务器建立连接
 	pUserApi->Init();
+
+	CQdFtdcReqUserLoginField* loginfield = new CQdFtdcReqUserLoginField;
+	//loginfield->TradingDay = "111";
+	//loginfield->BrokerID = "9999";
+	//loginfield->ParticipantID = "212266";
+	//loginfield->Password ="Ysd123456!";
+	
+
+	//pUserApi->ReqUserLogin(loginfield, 23);
 	//在这里添加代码
+	const char* ii = pUserApi->GetTradingDay();
+	cout << "交易日为" << ii << endl;
+	
 
 	// 释放useapi实例
 	pUserApi->Release();
+	cout << "release" << endl;
 	return 0;
 }
